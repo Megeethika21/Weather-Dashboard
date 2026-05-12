@@ -3,9 +3,9 @@ const apiKey = "YOUR_API_KEY";
 const searchBtn = document.getElementById("searchBtn");
 
 searchBtn.addEventListener("click", () => {
-  const city = document.getElementById("cityInput").value;
+  const city = document.getElementById("cityInput").value.trim();
 
-  if(city === "") {
+  if (city === "") {
     alert("Please enter a city name");
     return;
   }
@@ -21,19 +21,26 @@ async function getWeather(city) {
   try {
 
     const response = await fetch(url);
+
     const data = await response.json();
 
-    if(data.cod === "404") {
-      alert("City not found");
+    console.log(data);
+
+    // ERROR HANDLING
+    if (data.cod != 200) {
+      alert(data.message);
       return;
     }
 
-    document.getElementById("cityName").innerText = data.name;
+    // UPDATE UI
+    document.getElementById("cityName").innerText =
+      data.name;
+
     document.getElementById("temperature").innerText =
       `${Math.round(data.main.temp)}°C`;
 
     document.getElementById("condition").innerText =
-      data.weather[0].main;
+      data.weather[0].description;
 
     document.getElementById("humidity").innerText =
       data.main.humidity;
@@ -41,7 +48,10 @@ async function getWeather(city) {
     document.getElementById("wind").innerText =
       data.wind.speed;
 
-  } catch(error) {
+  } catch (error) {
+
     console.log("Error fetching weather data:", error);
+
+    alert("Something went wrong.");
   }
 }
